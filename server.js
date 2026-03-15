@@ -80,8 +80,15 @@ router.route('/movies')
     .post(authJwtController.isAuthenticated, async (req, res) => {
     try {
       const movie = new Movie(req.body);
+      if (!movie.title) {
+        return res.status(400).json({ success: false, message: 'Movie title is required.' });
+      }
+      else if (movie.releaseDate && (movie.releaseDate < 1900 || movie.releaseDate > 2100)) {
+        return res.status(400).json({ success: false, message: 'Release date must be between 1900 and 2100.' });
+      }
+      else {
       const savedMovie = await movie.save();
-      return res.status(201).json({ movie: savedMovie });
+      return res.status(201).json({ movie: savedMovie });}
     } catch (err) {
       if (err.name === 'ValidationError') {
         return res.status(400).json({ success: false, message: err.message });
@@ -89,7 +96,48 @@ router.route('/movies')
       console.error(err);
       return res.status(500).json({ success: false, message: 'Failed to create movie.' });
     }
-    });
+    })
+    .put(authJwtController.isAuthenticated, async (req, res) => {
+    try {      const { title, releaseDate, genre, actors } = req.body;
+      if (!title) {
+        return res.status(400).json({ success: false, message: 'Movie title is required.' });
+      } 
+      else if (releaseDate && (releaseDate < 1900 || releaseDate > 2100)) {
+        return res.status(400).json({ success: false, message: 'Release date must be between 1900 and 2100.' });
+      }
+      const updatedMovie = await Movie.findOneAndUpdate({ title }, { releaseDate, genre, actors }, { new: true });
+      if (!updatedMovie) {
+        return res.status(404).json({ success: false, message: 'Movie not found.' });
+      } 
+      return res.status(200).json({ movie: updatedMovie });
+    } catch (err) {
+      if (err.name === 'ValidationError') {
+        return res.status(400).json({ success: false, message: err.message });
+      }
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Failed to update movie.' });
+    } 
+    })
+    .delete(authJwtController.isAuthenticated, async (req, res) => {
+    try {
+      const { title } = req.body; 
+      if (!title) {
+        return res.status(400).json({ success: false, message: 'Movie title is required.' });
+      } 
+      const deletedMovie = await Movie.findOneAndDelete({ title });
+      if (!deletedMovie) {
+        return res.status(404).json({ success: false, message: 'Movie not found.' });
+      }
+      return res.status(200).json({ success: true, message: 'Movie deleted successfully.' });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Failed to delete movie.' });
+    }
+      })
+    
+    
+    ;
+
 
 app.use('/', router);
 
