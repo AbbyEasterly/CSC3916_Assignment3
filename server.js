@@ -69,10 +69,26 @@ router.post('/signin', async (req, res) => { // Use async/await
 
 router.route('/movies')
     .get(authJwtController.isAuthenticated, async (req, res) => {
-        return res.status(500).json({ success: false, message: 'GET request not supported' });
+    try {
+      const movies = await Movie.find({}).sort({ title: 1 });
+      return res.status(200).json(movies);
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Failed to retrieve movies.' });
+    }
     })
     .post(authJwtController.isAuthenticated, async (req, res) => {
-        return res.status(500).json({ success: false, message: 'POST request not supported' });
+    try {
+      const movie = new Movie(req.body);
+      const savedMovie = await movie.save();
+      return res.status(201).json({ movie: savedMovie });
+    } catch (err) {
+      if (err.name === 'ValidationError') {
+        return res.status(400).json({ success: false, message: err.message });
+      }
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Failed to create movie.' });
+    }
     });
 
 app.use('/', router);

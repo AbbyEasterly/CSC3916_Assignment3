@@ -17,7 +17,7 @@ const connectDB = async () => {
 connectDB();
 
 
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
     name: String,
     username: { type: String, required: true, index: { unique: true } },
     password: { type: String, required: true, select: false }

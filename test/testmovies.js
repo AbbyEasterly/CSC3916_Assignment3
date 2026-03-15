@@ -24,6 +24,16 @@ const testData = {
             { actorName: 'Johnny Depp', characterName: 'Mad Hatter' },
             { actorName: 'Helena Bonham Carter', characterName: 'Red Queen' }
         ]
+    },
+    movie: {
+        title: 'Pirates of the Caribbean: The Curse of the Black Pearl',
+        releaseDate: 2003,
+        genre: 'Adventure',
+        actors: [
+            { actorName: 'Johnny Depp', characterName: 'Captain Jack Sparrow' },
+            { actorName: 'Orlando Bloom', characterName: 'Will Turner' },
+            { actorName: 'Keira Knightley', characterName: 'Elizabeth Swann' }
+        ]
     }
 };
 
