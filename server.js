@@ -86,6 +86,7 @@ router.route('/movies')
       else if (movie.releaseDate && (movie.releaseDate < 1900 || movie.releaseDate > 2100)) {
         return res.status(400).json({ success: false, message: 'Release date must be between 1900 and 2100.' });
       }
+  
       else {
       const savedMovie = await movie.save();
       return res.status(201).json({ movie: savedMovie });}
